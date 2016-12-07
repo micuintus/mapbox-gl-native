@@ -2,6 +2,12 @@
 
 #pragma once
 
+#ifdef __cplusplus
+#define MGL_EXTERN extern "C" __attribute__((visibility ("default")))
+#else
+#define MGL_EXTERN extern __attribute__((visibility ("default")))
+#endif
+
 #if TARGET_OS_IPHONE
 @class UIImage;
 #define MGLImage UIImage
@@ -28,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 /** Indicates an error occurred in the Mapbox SDK. */
-extern NSErrorDomain const MGLErrorDomain;
+MGL_EXTERN NSErrorDomain const MGLErrorDomain;
 
 /** Error constants for the Mapbox SDK. */
 typedef NS_ENUM(NSInteger, MGLErrorCode) {

@@ -1,4 +1,4 @@
-#import <Foundation/Foundation.h>
+#import "MGLTypes.h"
 
 /**
  A source supplies data to be shown on the map. Sources don't contain styling 
@@ -8,6 +8,7 @@
  You should use the concrete subclasses of `MGLSource` to create vector, 
  raster, GeoJSON, and other source types.
  */
+MGL_EXTERN
 @interface MGLSource : NSObject
 
 #pragma mark Initializing a Source

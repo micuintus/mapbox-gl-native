@@ -3,6 +3,10 @@
 #include <vector>
 #include <string>
 
+#ifndef MGL_EXTERN
+#define MGL_EXTERN extern "C" __attribute__((visibility ("default")))
+#endif
+
 namespace mbgl {
 namespace util {
 namespace default_styles {
@@ -12,12 +16,12 @@ struct DefaultStyle {
     const char* name;
 };
 
-extern const DefaultStyle streets;
-extern const DefaultStyle outdoors;
-extern const DefaultStyle light;
-extern const DefaultStyle dark;
-extern const DefaultStyle satellite;
-extern const DefaultStyle satelliteStreets;
+MGL_EXTERN const DefaultStyle streets;
+MGL_EXTERN const DefaultStyle outdoors;
+MGL_EXTERN const DefaultStyle light;
+MGL_EXTERN const DefaultStyle dark;
+MGL_EXTERN const DefaultStyle satellite;
+MGL_EXTERN const DefaultStyle satelliteStreets;
 
 const DefaultStyle orderedStyles[] = {
     streets, outdoors, light, dark, satellite, satelliteStreets,
