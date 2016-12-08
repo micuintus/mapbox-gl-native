@@ -25,6 +25,44 @@
 @synthesize identifier;
 @synthesize attributes;
 
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder
+{
+    self = [super initWithCoder:decoder];
+    if (self)
+    {
+        NSSet<Class> *identifierClasses = [NSSet setWithArray:@[NSString.class, NSNumber.class]];
+        identifier = [decoder decodeObjectOfClasses:identifierClasses forKey:@"identifier"];
+        attributes = [decoder decodeObjectOfClass:NSDictionary.class forKey:@"attributes"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [super encodeWithCoder:coder];
+    [coder encodeObject:identifier forKey:@"identifier"];
+    [coder encodeObject:attributes forKey:@"attributes"];
+}
+
+- (BOOL)isEqual:(id)other
+{
+    if (other == self) { return YES; }
+    
+    MGLPointFeature *otherPointFeature = other;
+    return ([super isEqual:other]
+            && MGLIsEqualToDictionary(self.geoJSONDictionary, otherPointFeature.geoJSONDictionary));
+}
+
+- (NSUInteger)hash
+{
+    return [super hash]+[[self geoJSONDictionary] hash];
+}
+
 - (id)attributeForKey:(NSString *)key {
     return self.attributes[key];
 }

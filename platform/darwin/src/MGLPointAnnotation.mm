@@ -32,20 +32,12 @@
 
 - (BOOL)isEqual:(id)other
 {
-    if (other == self)
-    {
-        return YES;
-    }
-    if ( ! [other isKindOfClass:[self class]])
-    {
-        return NO;
-    }
+    if (other == self) { return YES; }
     
     MGLPointAnnotation *otherAnnotation = other;
-    return (self.coordinate.latitude == otherAnnotation.coordinate.latitude
-            && self.coordinate.longitude == otherAnnotation.coordinate.longitude
-            && [self.title isEqualToString:otherAnnotation.title]
-            && [self.subtitle isEqualToString:otherAnnotation.subtitle]);
+    return ([super isEqual:other]
+            && self.coordinate.latitude == otherAnnotation.coordinate.latitude
+            && self.coordinate.longitude == otherAnnotation.coordinate.longitude);
 }
 
 - (NSUInteger)hash
