@@ -38,4 +38,31 @@
     XCTAssertEqualObjects(pointFeature, unarchivedPointFeature);
 }
 
+- (void)testPolyline {
+    CLLocationCoordinate2D coordinates[] = {
+        CLLocationCoordinate2DMake(0.129631234123, 1.7812739312551),
+        CLLocationCoordinate2DMake(2.532083092342, 3.5216418292392)
+    };
+    
+    NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
+    
+    MGLPolyline *polyline = [MGLPolyline polylineWithCoordinates:coordinates count:numberOfCoordinates];
+    polyline.title = @"title";
+    polyline.subtitle = @"subtitle";
+    
+    NSString *filePath = [self temporaryFilePathForClass:MGLPolyline.class];
+    [NSKeyedArchiver archiveRootObject:polyline toFile:filePath];
+    MGLPolyline *unarchivedPolyline = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    
+    XCTAssertEqualObjects(polyline, unarchivedPolyline);
+    
+    CLLocationCoordinate2D otherCoordinates[] = {
+        CLLocationCoordinate2DMake(-1, -2)
+    };
+    
+    [unarchivedPolyline replaceCoordinatesInRange:NSMakeRange(0, 1) withCoordinates:otherCoordinates];
+    
+    XCTAssertNotEqualObjects(polyline, unarchivedPolyline);
+}
+
 @end

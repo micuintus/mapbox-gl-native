@@ -5,6 +5,37 @@
 #include <mbgl/util/geo.hpp>
 #include <mbgl/util/optional.hpp>
 
+bool compareByCoordinate(CLLocationCoordinate2D lhs, CLLocationCoordinate2D rhs)
+{
+    return lhs.latitude+lhs.longitude < rhs.latitude+rhs.longitude;
+}
+
+bool operator!=(const CLLocationCoordinate2D lhs, const CLLocationCoordinate2D rhs) {
+    return lhs.latitude != rhs.latitude || lhs.longitude != rhs.longitude;
+}
+
+bool operator==(std::vector<CLLocationCoordinate2D>& lhs, std::vector<CLLocationCoordinate2D>& rhs)
+{
+    if (lhs.size() != rhs.size()) return false;
+
+    std::sort(lhs.begin(), lhs.end(), compareByCoordinate);
+    std::sort(rhs.begin(), rhs.end(), compareByCoordinate);
+    
+    auto itLhs = lhs.begin();
+    auto itRhs = rhs.begin();
+    
+    while (itLhs != lhs.end() || itRhs != rhs.end())
+    {
+        if (*itLhs != *itRhs)
+            return false;
+        
+        if (itLhs != lhs.end()) ++itLhs;
+        if (itRhs != rhs.end()) ++itRhs;
+    }
+    
+    return true;
+}
+
 @implementation MGLMultiPoint
 {
     mbgl::optional<mbgl::LatLngBounds> _bounds;
@@ -25,6 +56,61 @@
     }
 
     return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder
+{
+    self = [super initWithCoder:decoder];
+    if (self)
+    {
+        NSArray *coordinates = [decoder decodeObjectOfClass:[NSArray class] forKey:@"coordinates"];
+        CLLocationCoordinate2D *coords = (CLLocationCoordinate2D *)malloc([coordinates count] * sizeof(CLLocationCoordinate2D));
+        for (NSUInteger i = 0; i < [coordinates count]; i++)
+        {
+            coords[i] = CLLocationCoordinate2DMake([coordinates[i][0] doubleValue], [coordinates[i][1] doubleValue]);
+        }
+        _coordinates = { coords, coords + [coordinates count] };
+        free(coords);
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [super encodeWithCoder:coder];
+    
+    NSMutableArray *coordinates = [NSMutableArray array];
+    for (auto coord : _coordinates) {
+        [coordinates addObject:@[@(coord.latitude), @(coord.longitude)]];
+    }
+    [coder encodeObject:coordinates forKey:@"coordinates"];
+}
+
+- (BOOL)isEqual:(id)other
+{
+    if (self == other) return YES;
+    
+    MGLMultiPoint *otherMultipoint = other;
+    
+    CLLocationCoordinate2D *otherCoordinates = [otherMultipoint coordinates];
+    std::vector<CLLocationCoordinate2D> otherCoords;
+    otherCoords.reserve([otherMultipoint pointCount]);
+    
+    for (NSUInteger i = 0; i < [otherMultipoint pointCount]; i++) {
+        otherCoords.push_back(otherCoordinates[i]);
+    }
+    
+    return ([super isEqual:otherMultipoint]
+            && _coordinates == otherCoords);
+}
+
+- (NSUInteger)hash
+{
+    NSUInteger hash = [super hash];
+    for (auto coord : _coordinates) {
+        hash += coord.latitude+coord.longitude;
+    }
+    return hash;
 }
 
 - (CLLocationCoordinate2D)coordinate

@@ -42,8 +42,7 @@
 
 - (NSUInteger)hash
 {
-    return @(self.coordinate.latitude).hash+@(self.coordinate.longitude).hash
-    +self.title.hash+self.subtitle.hash;
+    return [super hash] + @(self.coordinate.latitude).hash + @(self.coordinate.longitude).hash;
 }
 
 - (NSString *)description
