@@ -55,7 +55,7 @@
     if (self = [super init]) {
         _title = [coder decodeObjectOfClass:[NSString class] forKey:@"title"];
         _subtitle = [coder decodeObjectOfClass:[NSString class] forKey:@"subtitle"];
-#if TARGET_OS_MACOS
+#if !TARGET_OS_IPHONE
         _toolTip = [coder decodeObjectOfClass:[NSString class] forKey:@"toolTip"];
 #endif
     }
@@ -66,7 +66,7 @@
 {
     [coder encodeObject:_title forKey:@"title"];
     [coder encodeObject:_subtitle forKey:@"subtitle"];
-#if TARGET_OS_MACOS
+#if !TARGET_OS_IPHONE
     [coder encodeObject:_toolTip forKey:@"toolTip"];
 #endif
 }
@@ -76,13 +76,13 @@
     if (other == self) { return YES; }
     id <MGLAnnotation> annotation = other;
     
-#if TARGET_OS_MACOS
-    return (MGLIsEqualToString(_title, [annotation title])
-            && MGLIsEqualToString(_subtitle, [annotation subtitle])
-            && MGLIsEqualToString(_toolTip, [annotation toolTip]));
+#if TARGET_OS_IPHONE
+    return ((!_title && ![annotation title]) || [_title isEqualToString:[annotation title]])
+            && ((!_subtitle && ![annotation subtitle]) || [_subtitle isEqualToString:[annotation subtitle]]);
 #else
-    return (MGLIsEqualToString(_title, [annotation title])
-            && MGLIsEqualToString(_subtitle, [annotation subtitle]));
+    return ((!_title && ![annotation title]) || [_title isEqualToString:[annotation title]])
+            && ((!_subtitle && ![annotation subtitle]) || [_subtitle isEqualToString:[annotation subtitle]])
+            && ((!_toolTip && ![annotation toolTip]) || [_toolTip isEqualToString:[annotation toolTip]]);
 #endif
 }
 
@@ -91,7 +91,7 @@
     NSUInteger hash;
     hash += _title.hash;
     hash += _subtitle.hash;
-#if TARGET_OS_MACOS
+#if !TARGET_OS_IPHONE
     hash += _toolTip.hash;
 #endif
     return hash;

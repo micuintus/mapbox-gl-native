@@ -50,7 +50,7 @@
     polyline.title = @"title";
     polyline.subtitle = @"subtitle";
     
-    NSString *filePath = [self temporaryFilePathForClass:MGLPolyline.class];
+    NSString *filePath = [self temporaryFilePathForClass:[MGLPolyline class]];
     [NSKeyedArchiver archiveRootObject:polyline toFile:filePath];
     MGLPolyline *unarchivedPolyline = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
     
@@ -63,6 +63,54 @@
     [unarchivedPolyline replaceCoordinatesInRange:NSMakeRange(0, 1) withCoordinates:otherCoordinates];
     
     XCTAssertNotEqualObjects(polyline, unarchivedPolyline);
+}
+
+- (void)testPolygon
+{
+    CLLocationCoordinate2D coordinates[] = {
+        CLLocationCoordinate2DMake(0.664482398, 1.8865675),
+        CLLocationCoordinate2DMake(2.13224687, 3.9984632)
+    };
+    
+    NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
+    
+    MGLPolygon *polygon = [MGLPolygon polygonWithCoordinates:coordinates count:numberOfCoordinates];
+    polygon.title = nil;
+    polygon.subtitle = @"subtitle";
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLPolygon class]];
+    [NSKeyedArchiver archiveRootObject:polygon toFile:filePath];
+    
+    MGLPolygon *unarchivedPolygon = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    
+    XCTAssertEqualObjects(polygon, unarchivedPolygon);
+}
+
+- (void)testPolygonWithInteriorPolygons
+{
+    CLLocationCoordinate2D coordinates[] = {
+        CLLocationCoordinate2DMake(0, 0),
+        CLLocationCoordinate2DMake(10, 10)
+    };
+    
+    NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
+    
+    CLLocationCoordinate2D interiorCoordinates[] = {
+        CLLocationCoordinate2DMake(4, 4),
+        CLLocationCoordinate2DMake(6, 6)
+    };
+    
+    NSUInteger numberOfInteriorCoordinates = sizeof(interiorCoordinates) / sizeof(CLLocationCoordinate2D);
+    
+    MGLPolygon *interiorPolygon = [MGLPolygon polygonWithCoordinates:interiorCoordinates count:numberOfInteriorCoordinates];
+    MGLPolygon *polygon = [MGLPolygon polygonWithCoordinates:coordinates count:numberOfCoordinates interiorPolygons:@[interiorPolygon]];
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLPolygon class]];
+    [NSKeyedArchiver archiveRootObject:polygon toFile:filePath];
+    
+    MGLPolygon *unarchivedPolygon = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    
+    XCTAssertEqualObjects(polygon, unarchivedPolygon);
 }
 
 @end

@@ -51,11 +51,12 @@
 
 - (BOOL)isEqual:(id)other
 {
-    if (other == self) { return YES; }
+    if (other == self) return YES;
+    if (![other isKindOfClass:[MGLPointFeature class]]) return NO;
     
     MGLPointFeature *otherPointFeature = other;
     return ([super isEqual:other]
-            && MGLIsEqualToDictionary(self.geoJSONDictionary, otherPointFeature.geoJSONDictionary));
+            && ((!self.geoJSONDictionary && !otherPointFeature.geoJSONDictionary) || [self.geoJSONDictionary isEqualToDictionary:otherPointFeature.geoJSONDictionary]));
 }
 
 - (NSUInteger)hash

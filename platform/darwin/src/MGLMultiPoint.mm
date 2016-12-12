@@ -67,7 +67,8 @@ bool operator==(std::vector<CLLocationCoordinate2D>& lhs, std::vector<CLLocation
         CLLocationCoordinate2D *coords = (CLLocationCoordinate2D *)malloc([coordinates count] * sizeof(CLLocationCoordinate2D));
         for (NSUInteger i = 0; i < [coordinates count]; i++)
         {
-            coords[i] = CLLocationCoordinate2DMake([coordinates[i][0] doubleValue], [coordinates[i][1] doubleValue]);
+            coords[i] = CLLocationCoordinate2DMake([coordinates[i][@"latitude"] doubleValue],
+                                                   [coordinates[i][@"longitude"] doubleValue]);
         }
         _coordinates = { coords, coords + [coordinates count] };
         free(coords);
@@ -81,7 +82,9 @@ bool operator==(std::vector<CLLocationCoordinate2D>& lhs, std::vector<CLLocation
     
     NSMutableArray *coordinates = [NSMutableArray array];
     for (auto coord : _coordinates) {
-        [coordinates addObject:@[@(coord.latitude), @(coord.longitude)]];
+        [coordinates addObject:@{@"latitude": @(coord.latitude),
+                                 @"longitude": @(coord.longitude)}];
+        
     }
     [coder encodeObject:coordinates forKey:@"coordinates"];
 }
@@ -89,19 +92,11 @@ bool operator==(std::vector<CLLocationCoordinate2D>& lhs, std::vector<CLLocation
 - (BOOL)isEqual:(id)other
 {
     if (self == other) return YES;
-    
+    if (![other isKindOfClass:[MGLMultiPoint class]]) return NO;
+           
     MGLMultiPoint *otherMultipoint = other;
-    
-    CLLocationCoordinate2D *otherCoordinates = [otherMultipoint coordinates];
-    std::vector<CLLocationCoordinate2D> otherCoords;
-    otherCoords.reserve([otherMultipoint pointCount]);
-    
-    for (NSUInteger i = 0; i < [otherMultipoint pointCount]; i++) {
-        otherCoords.push_back(otherCoordinates[i]);
-    }
-    
     return ([super isEqual:otherMultipoint]
-            && _coordinates == otherCoords);
+            && _coordinates == otherMultipoint->_coordinates);
 }
 
 - (NSUInteger)hash

@@ -28,6 +28,32 @@
     return self;
 }
 
+- (instancetype)initWithCoder:(NSCoder *)decoder {
+    self = [super initWithCoder:decoder];
+    if (self) {
+        _interiorPolygons = [decoder decodeObjectOfClass:[NSArray class] forKey:@"interiorPolygons"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    [coder encodeObject:self.interiorPolygons forKey:@"interiorPolygons"];
+}
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) return YES;
+    if (![other isKindOfClass:[MGLPolygon class]]) return NO;
+    
+    MGLPolygon *otherPolygon = (MGLPolygon *)other;
+    return ([super isEqual:otherPolygon] &&
+            [[self geoJSONDictionary] isEqualToDictionary:[otherPolygon geoJSONDictionary]]);
+}
+
+- (NSUInteger)hash {
+    return [super hash] + [[self geoJSONDictionary] hash];
+}
+
 - (mbgl::LinearRing<double>)ring {
     NSUInteger count = self.pointCount;
     CLLocationCoordinate2D *coordinates = self.coordinates;

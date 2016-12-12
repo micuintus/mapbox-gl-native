@@ -18,12 +18,6 @@
 #define MGLColor NSColor
 #endif
 
-#define TARGET_OS_MACOS (TARGET_OS_MAC && !(TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_WATCH))
-
-#define MGLIsEqual(lhs,rhs) ((!lhs && !rhs) || [lhs isEqual:rhs])
-#define MGLIsEqualToString(lhs,rhs) ((!lhs && !rhs) || [lhs isEqualToString:rhs])
-#define MGLIsEqualToDictionary(lhs,rhs) ((!lhs && !rhs) || [lhs isEqualToDictionary:rhs])
-
 NS_ASSUME_NONNULL_BEGIN
 
 #ifndef NS_STRING_ENUM

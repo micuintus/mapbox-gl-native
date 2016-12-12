@@ -32,7 +32,8 @@
 
 - (BOOL)isEqual:(id)other
 {
-    if (other == self) { return YES; }
+    if (other == self) return YES;
+    if (![other isKindOfClass:[MGLPointAnnotation class]]) return NO;
     
     MGLPointAnnotation *otherAnnotation = other;
     return ([super isEqual:other]
