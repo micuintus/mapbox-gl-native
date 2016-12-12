@@ -155,4 +155,57 @@
     XCTAssertNotEqualObjects(polygonFeature, unarchivedPolygonFeature);
 }
 
+- (void)testPointCollection {
+    CLLocationCoordinate2D coordinates[] = {
+        CLLocationCoordinate2DMake(0, 1),
+        CLLocationCoordinate2DMake(10, 11),
+        CLLocationCoordinate2DMake(20, 21),
+        CLLocationCoordinate2DMake(30, 31),
+    };
+    
+    NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
+    
+    MGLPointCollection *pointCollection = [MGLPointCollection pointCollectionWithCoordinates:coordinates count:numberOfCoordinates];
+    NSString *filePath = [self temporaryFilePathForClass:[MGLPointCollection class]];
+    [NSKeyedArchiver archiveRootObject:pointCollection toFile:filePath];
+    
+    MGLPointCollection *unarchivedPointCollection = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    
+    XCTAssertEqualObjects(pointCollection, unarchivedPointCollection);
+}
+
+- (void)testPointCollectionFeature {
+    NSMutableArray *features = [NSMutableArray array];
+    for (NSUInteger i = 0; i < 100; i++) {
+        MGLPointFeature *feature = [[MGLPointFeature alloc] init];
+        feature.coordinate = CLLocationCoordinate2DMake(arc4random() % 90, arc4random() % 180);
+        [features addObject:feature];
+    }
+    
+    
+    CLLocationCoordinate2D coordinates[] = {
+        CLLocationCoordinate2DMake(0, 1),
+        CLLocationCoordinate2DMake(10, 11),
+        CLLocationCoordinate2DMake(20, 21),
+        CLLocationCoordinate2DMake(30, 31),
+    };
+    
+    NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
+    
+    MGLPointCollectionFeature *collection = [MGLPointCollectionFeature pointCollectionWithCoordinates:coordinates count:numberOfCoordinates];
+    collection.identifier = @"identifier";
+    collection.attributes = @{@"bbox": @[@1, @2, @3, @4]};
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLPointCollectionFeature class]];
+    [NSKeyedArchiver archiveRootObject:collection toFile:filePath];
+    
+    MGLPointCollectionFeature *unarchivedCollection = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    
+    XCTAssertEqualObjects(collection, unarchivedCollection);
+    
+    unarchivedCollection.identifier = @"newIdentifier";
+    
+    XCTAssertNotEqualObjects(collection, unarchivedCollection);
+}
+
 @end

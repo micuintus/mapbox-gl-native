@@ -1,5 +1,6 @@
 #import "MGLPointCollection_Private.h"
 #import "MGLGeometry_Private.h"
+#import "NSArray+MGLAdditions.h"
 
 #import <mbgl/util/geojson.hpp>
 #import <mbgl/util/geometry.hpp>
@@ -25,14 +26,41 @@ NS_ASSUME_NONNULL_BEGIN
     if (self)
     {
         _coordinates = { coords, coords + count };
-        mbgl::LatLngBounds bounds = mbgl::LatLngBounds::empty();
-        for (auto coordinate : _coordinates)
-        {
-            bounds.extend(mbgl::LatLng(coordinate.latitude, coordinate.longitude));
-        }
-        _overlayBounds = MGLCoordinateBoundsFromLatLngBounds(bounds);
+        [self setupBounds];
     }
     return self;
+}
+
+- (nullable instancetype)initWithCoder:(NSCoder *)decoder {
+    if (self = [super initWithCoder:decoder]) {
+        NSArray *coordinates = [decoder decodeObjectOfClass:[NSArray class] forKey:@"coordinates"];
+        _coordinates = [coordinates mgl_coordinates];
+        [self setupBounds];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    [coder encodeObject:[NSArray mgl_coordinatesFromCoordinates:_coordinates] forKey:@"coordinates"];
+}
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) return YES;
+    if (![other isKindOfClass:[MGLPointCollection class]]) return NO;
+    
+    MGLPointCollection *otherCollection = (MGLPointCollection *)other;
+    return ([super isEqual:other]
+            && ((![self geoJSONDictionary] && ![otherCollection geoJSONDictionary]) || [[self geoJSONDictionary] isEqualToDictionary:[otherCollection geoJSONDictionary]]));
+}
+
+- (void)setupBounds {
+    mbgl::LatLngBounds bounds = mbgl::LatLngBounds::empty();
+    for (auto coordinate : _coordinates)
+    {
+        bounds.extend(mbgl::LatLng(coordinate.latitude, coordinate.longitude));
+    }
+    _overlayBounds = MGLCoordinateBoundsFromLatLngBounds(bounds);
 }
 
 - (NSUInteger)pointCount

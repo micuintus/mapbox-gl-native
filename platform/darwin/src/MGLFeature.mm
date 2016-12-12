@@ -10,6 +10,7 @@
 #import "MGLPolyline+MGLAdditions.h"
 #import "MGLPolygon+MGLAdditions.h"
 #import "NSDictionary+MGLAdditions.h"
+#import "NSArray+MGLAdditions.h"
 
 #import "NSExpression+MGLAdditions.h"
 
@@ -161,8 +162,7 @@
     [coder encodeObject:attributes forKey:@"attributes"];
 }
 
-- (BOOL)isEqual:(id)other
-{
+- (BOOL)isEqual:(id)other {
     if (other == self) return YES;
     if (![other isKindOfClass:[MGLPolygonFeature class]]) return NO;
     
@@ -171,8 +171,7 @@
             && ((!self.geoJSONDictionary && !otherPointFeature.geoJSONDictionary) || [self.geoJSONDictionary isEqualToDictionary:otherPointFeature.geoJSONDictionary]));
 }
 
-- (NSUInteger)hash
-{
+- (NSUInteger)hash {
     return [super hash] + [[self geoJSONDictionary] hash];
 }
 
@@ -197,6 +196,40 @@
 
 @synthesize identifier;
 @synthesize attributes;
+
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder {
+    if (self = [super initWithCoder:decoder]) {
+        NSSet<Class> *identifierClasses = [NSSet setWithArray:@[[NSString class], [NSNumber class]]];
+        identifier = [decoder decodeObjectOfClasses:identifierClasses forKey:@"identifier"];
+        attributes = [decoder decodeObjectOfClass:[NSDictionary class] forKey:@"attributes"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    [coder encodeObject:identifier forKey:@"identifier"];
+    [coder encodeObject:attributes forKey:@"attributes"];
+}
+
+- (BOOL)isEqual:(id)other
+{
+    if (other == self) return YES;
+    if (![other isKindOfClass:[MGLPointCollectionFeature class]]) return NO;
+    
+    MGLPointCollectionFeature *otherPointFeature = other;
+    return ([super isEqual:other]
+            && ((!self.geoJSONDictionary && !otherPointFeature.geoJSONDictionary) || [self.geoJSONDictionary isEqualToDictionary:otherPointFeature.geoJSONDictionary]));
+}
+
+- (NSUInteger)hash
+{
+    return [super hash] + [[self geoJSONDictionary] hash];
+}
 
 - (id)attributeForKey:(NSString *)key {
     return self.attributes[key];

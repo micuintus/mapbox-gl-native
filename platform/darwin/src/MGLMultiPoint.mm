@@ -1,40 +1,8 @@
 #import "MGLMultiPoint_Private.h"
 #import "MGLGeometry_Private.h"
+#import "MGLShape_Private.h"
+#import "NSArray+MGLAdditions.h"
 #import "MGLTypes.h"
-
-#include <mbgl/util/geo.hpp>
-#include <mbgl/util/optional.hpp>
-
-bool compareByCoordinate(CLLocationCoordinate2D lhs, CLLocationCoordinate2D rhs)
-{
-    return lhs.latitude+lhs.longitude < rhs.latitude+rhs.longitude;
-}
-
-bool operator!=(const CLLocationCoordinate2D lhs, const CLLocationCoordinate2D rhs) {
-    return lhs.latitude != rhs.latitude || lhs.longitude != rhs.longitude;
-}
-
-bool operator==(std::vector<CLLocationCoordinate2D>& lhs, std::vector<CLLocationCoordinate2D>& rhs)
-{
-    if (lhs.size() != rhs.size()) return false;
-
-    std::sort(lhs.begin(), lhs.end(), compareByCoordinate);
-    std::sort(rhs.begin(), rhs.end(), compareByCoordinate);
-    
-    auto itLhs = lhs.begin();
-    auto itRhs = rhs.begin();
-    
-    while (itLhs != lhs.end() || itRhs != rhs.end())
-    {
-        if (*itLhs != *itRhs)
-            return false;
-        
-        if (itLhs != lhs.end()) ++itLhs;
-        if (itRhs != rhs.end()) ++itRhs;
-    }
-    
-    return true;
-}
 
 @implementation MGLMultiPoint
 {
@@ -60,18 +28,10 @@ bool operator==(std::vector<CLLocationCoordinate2D>& lhs, std::vector<CLLocation
 
 - (instancetype)initWithCoder:(NSCoder *)decoder
 {
-    self = [super initWithCoder:decoder];
-    if (self)
+    if (self = [super initWithCoder:decoder])
     {
         NSArray *coordinates = [decoder decodeObjectOfClass:[NSArray class] forKey:@"coordinates"];
-        CLLocationCoordinate2D *coords = (CLLocationCoordinate2D *)malloc([coordinates count] * sizeof(CLLocationCoordinate2D));
-        for (NSUInteger i = 0; i < [coordinates count]; i++)
-        {
-            coords[i] = CLLocationCoordinate2DMake([coordinates[i][@"latitude"] doubleValue],
-                                                   [coordinates[i][@"longitude"] doubleValue]);
-        }
-        _coordinates = { coords, coords + [coordinates count] };
-        free(coords);
+        _coordinates = [coordinates mgl_coordinates];
     }
     return self;
 }
@@ -80,12 +40,7 @@ bool operator==(std::vector<CLLocationCoordinate2D>& lhs, std::vector<CLLocation
 {
     [super encodeWithCoder:coder];
     
-    NSMutableArray *coordinates = [NSMutableArray array];
-    for (auto coord : _coordinates) {
-        [coordinates addObject:@{@"latitude": @(coord.latitude),
-                                 @"longitude": @(coord.longitude)}];
-        
-    }
+    NSArray *coordinates = [NSArray mgl_coordinatesFromCoordinates:_coordinates];
     [coder encodeObject:coordinates forKey:@"coordinates"];
 }
 
