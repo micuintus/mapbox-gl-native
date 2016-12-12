@@ -65,8 +65,7 @@
     XCTAssertNotEqualObjects(polyline, unarchivedPolyline);
 }
 
-- (void)testPolygon
-{
+- (void)testPolygon {
     CLLocationCoordinate2D coordinates[] = {
         CLLocationCoordinate2DMake(0.664482398, 1.8865675),
         CLLocationCoordinate2DMake(2.13224687, 3.9984632)
@@ -86,11 +85,10 @@
     XCTAssertEqualObjects(polygon, unarchivedPolygon);
 }
 
-- (void)testPolygonWithInteriorPolygons
-{
+- (void)testPolygonWithInteriorPolygons {
     CLLocationCoordinate2D coordinates[] = {
-        CLLocationCoordinate2DMake(0, 0),
-        CLLocationCoordinate2DMake(10, 10)
+        CLLocationCoordinate2DMake(0, 1),
+        CLLocationCoordinate2DMake(10, 20)
     };
     
     NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
@@ -111,6 +109,50 @@
     MGLPolygon *unarchivedPolygon = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
     
     XCTAssertEqualObjects(polygon, unarchivedPolygon);
+}
+
+- (void)testPolylineFeature {
+    CLLocationCoordinate2D coordinates[] = {
+        CLLocationCoordinate2DMake(0, 1),
+        CLLocationCoordinate2DMake(10, 20)
+    };
+    
+    NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
+    MGLPolylineFeature *polylineFeature = [MGLPolylineFeature polylineWithCoordinates:coordinates count:numberOfCoordinates];
+    polylineFeature.attributes = @{@"bbox": @[@0, @1, @2, @3]};
+    polylineFeature.identifier = @"identifier";
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLPolylineFeature class]];
+    [NSKeyedArchiver archiveRootObject:polylineFeature toFile:filePath];
+    
+    MGLPolylineFeature *unarchivedPolylineFeature = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    
+    XCTAssertEqualObjects(polylineFeature, unarchivedPolylineFeature);
+    
+    unarchivedPolylineFeature.attributes = @{@"bbox": @[@4, @3, @2, @1]};
+    
+    XCTAssertNotEqualObjects(polylineFeature, unarchivedPolylineFeature);
+}
+
+- (void)testPolygonFeature {
+    CLLocationCoordinate2D coordinates[] = {
+        CLLocationCoordinate2DMake(0, 1),
+        CLLocationCoordinate2DMake(10, 20)
+    };
+    
+    NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
+    MGLPolygonFeature *polygonFeature = [MGLPolygonFeature polygonWithCoordinates:coordinates count:numberOfCoordinates];
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLPolygonFeature class]];
+    [NSKeyedArchiver archiveRootObject:polygonFeature toFile:filePath];
+    
+    MGLPolygonFeature *unarchivedPolygonFeature = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    
+    XCTAssertEqualObjects(polygonFeature, unarchivedPolygonFeature);
+    
+    unarchivedPolygonFeature.identifier = @"test";
+    
+    XCTAssertNotEqualObjects(polygonFeature, unarchivedPolygonFeature);
 }
 
 @end

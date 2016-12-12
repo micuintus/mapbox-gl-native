@@ -86,6 +86,40 @@
 @synthesize identifier;
 @synthesize attributes;
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder {
+    if (self = [super initWithCoder:decoder]) {
+        NSSet<Class> *identifierClasses = [NSSet setWithArray:@[[NSString class], [NSNumber class]]];
+        identifier = [decoder decodeObjectOfClasses:identifierClasses forKey:@"identifier"];
+        attributes = [decoder decodeObjectOfClass:[NSDictionary class] forKey:@"attributes"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    [coder encodeObject:identifier forKey:@"identifier"];
+    [coder encodeObject:attributes forKey:@"attributes"];
+}
+
+- (BOOL)isEqual:(id)other
+{
+    if (other == self) return YES;
+    if (![other isKindOfClass:[MGLPolylineFeature class]]) return NO;
+    
+    MGLPolylineFeature *otherPointFeature = other;
+    return ([super isEqual:other]
+            && ((!self.geoJSONDictionary && !otherPointFeature.geoJSONDictionary) || [self.geoJSONDictionary isEqualToDictionary:otherPointFeature.geoJSONDictionary]));
+}
+
+- (NSUInteger)hash
+{
+    return [super hash] + [[self geoJSONDictionary] hash];
+}
+
 - (id)attributeForKey:(NSString *)key {
     return self.attributes[key];
 }
@@ -107,6 +141,40 @@
 
 @synthesize identifier;
 @synthesize attributes;
+
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder {
+    if (self = [super initWithCoder:decoder]) {
+        NSSet<Class> *identifierClasses = [NSSet setWithArray:@[[NSString class], [NSNumber class]]];
+        identifier = [decoder decodeObjectOfClasses:identifierClasses forKey:@"identifier"];
+        attributes = [decoder decodeObjectOfClass:[NSDictionary class] forKey:@"attributes"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    [coder encodeObject:identifier forKey:@"identifier"];
+    [coder encodeObject:attributes forKey:@"attributes"];
+}
+
+- (BOOL)isEqual:(id)other
+{
+    if (other == self) return YES;
+    if (![other isKindOfClass:[MGLPolygonFeature class]]) return NO;
+    
+    MGLPolygonFeature *otherPointFeature = other;
+    return ([super isEqual:other]
+            && ((!self.geoJSONDictionary && !otherPointFeature.geoJSONDictionary) || [self.geoJSONDictionary isEqualToDictionary:otherPointFeature.geoJSONDictionary]));
+}
+
+- (NSUInteger)hash
+{
+    return [super hash] + [[self geoJSONDictionary] hash];
+}
 
 - (id)attributeForKey:(NSString *)key {
     return self.attributes[key];
