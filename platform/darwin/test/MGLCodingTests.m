@@ -380,7 +380,7 @@
 }
 
 - (void)testAnnotationImage {
-#if TARGET_IPHONE
+#if TARGET_OS_IPHONE
     UIGraphicsBeginImageContext(CGSizeMake(10, 10));
     [[UIColor redColor] setFill];
     UIRectFill(CGRectMake(0, 0, 10, 10));
@@ -402,5 +402,27 @@
     
     XCTAssertEqualObjects(annotationImage, unarchivedAnnotationImage);
 }
+
+#if TARGET_OS_IPHONE
+- (void)testAnnotationView {
+    MGLAnnotationView *annotationView = [[MGLAnnotationView alloc] initWithReuseIdentifier:@"id"];
+    annotationView.enabled = NO;
+    annotationView.selected = YES;
+    annotationView.draggable = YES;
+    annotationView.centerOffset = CGVectorMake(10, 10);
+    annotationView.scalesWithViewingDistance = NO;
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLAnnotationView class]];
+    [NSKeyedArchiver archiveRootObject:annotationView toFile:filePath];
+    
+    MGLAnnotationView *unarchivedAnnotationView = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    
+    XCTAssertEqual(annotationView.enabled, unarchivedAnnotationView.enabled);
+    XCTAssertEqual(annotationView.selected, unarchivedAnnotationView.selected);
+    XCTAssertEqual(annotationView.draggable, unarchivedAnnotationView.draggable);
+    XCTAssertEqualObjects(NSStringFromCGVector(annotationView.centerOffset), NSStringFromCGVector(unarchivedAnnotationView.centerOffset));
+    XCTAssertEqual(annotationView.scalesWithViewingDistance, unarchivedAnnotationView.scalesWithViewingDistance);
+}
+#end
 
 @end
