@@ -182,7 +182,6 @@
         [features addObject:feature];
     }
     
-    
     CLLocationCoordinate2D coordinates[] = {
         CLLocationCoordinate2DMake(0, 1),
         CLLocationCoordinate2DMake(10, 11),
@@ -206,6 +205,36 @@
     unarchivedCollection.identifier = @"newIdentifier";
     
     XCTAssertNotEqualObjects(collection, unarchivedCollection);
+}
+
+- (void)testMultiPolyline {
+    
+    CLLocationCoordinate2D coordinates[] = {
+        CLLocationCoordinate2DMake(0, 1),
+        CLLocationCoordinate2DMake(10, 11),
+        CLLocationCoordinate2DMake(20, 21),
+        CLLocationCoordinate2DMake(30, 31),
+    };
+    
+    NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
+    
+    NSMutableArray *polylines = [NSMutableArray array];
+    
+    for (NSUInteger i = 0; i < 100; i++) {
+        MGLPolyline *polyline = [MGLPolyline polylineWithCoordinates:coordinates count:numberOfCoordinates];
+        [polylines addObject:polyline];
+    }
+    
+    MGLMultiPolyline *multiPolyline = [MGLMultiPolyline multiPolylineWithPolylines:polylines];
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLMultiPolyline class]];
+    [NSKeyedArchiver archiveRootObject:multiPolyline toFile:filePath];
+    
+    MGLMultiPolyline *unarchivedMultipolyline = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    MGLMultiPolyline *anotherMultipolyline = [MGLMultiPolyline multiPolylineWithPolylines:[polylines subarrayWithRange:NSMakeRange(0, polylines.count/2)]];
+    
+    XCTAssertEqualObjects(multiPolyline, unarchivedMultipolyline);
+    XCTAssertNotEqualObjects(unarchivedMultipolyline, anotherMultipolyline);
 }
 
 @end
