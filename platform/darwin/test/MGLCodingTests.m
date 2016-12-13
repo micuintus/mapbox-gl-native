@@ -230,11 +230,41 @@
     NSString *filePath = [self temporaryFilePathForClass:[MGLMultiPolyline class]];
     [NSKeyedArchiver archiveRootObject:multiPolyline toFile:filePath];
     
-    MGLMultiPolyline *unarchivedMultipolyline = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    MGLMultiPolyline *unarchivedMultiPolyline = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
     MGLMultiPolyline *anotherMultipolyline = [MGLMultiPolyline multiPolylineWithPolylines:[polylines subarrayWithRange:NSMakeRange(0, polylines.count/2)]];
     
-    XCTAssertEqualObjects(multiPolyline, unarchivedMultipolyline);
-    XCTAssertNotEqualObjects(unarchivedMultipolyline, anotherMultipolyline);
+    XCTAssertEqualObjects(multiPolyline, unarchivedMultiPolyline);
+    XCTAssertNotEqualObjects(unarchivedMultiPolyline, anotherMultipolyline);
+}
+
+- (void)testMultiPolygon {
+    
+    CLLocationCoordinate2D coordinates[] = {
+        CLLocationCoordinate2DMake(0, 1),
+        CLLocationCoordinate2DMake(10, 11),
+        CLLocationCoordinate2DMake(20, 21),
+        CLLocationCoordinate2DMake(30, 31),
+    };
+    
+    NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
+    
+    NSMutableArray *polygons = [NSMutableArray array];
+    
+    for (NSUInteger i = 0; i < 100; i++) {
+        MGLPolygon *polygon = [MGLPolygon polygonWithCoordinates:coordinates count:numberOfCoordinates];
+        [polygons addObject:polygon];
+    }
+    
+    MGLMultiPolygon *multiPolygon = [MGLMultiPolygon multiPolygonWithPolygons:polygons];
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLMultiPolygon class]];
+    [NSKeyedArchiver archiveRootObject:multiPolygon toFile:filePath];
+    
+    MGLMultiPolygon *unarchivedMultiPolygon = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    MGLMultiPolygon *anotherMultiPolygon = [MGLMultiPolygon multiPolygonWithPolygons:[polygons subarrayWithRange:NSMakeRange(0, polygons.count/2)]];
+    
+    XCTAssertEqualObjects(multiPolygon, unarchivedMultiPolygon);
+    XCTAssertNotEqualObjects(anotherMultiPolygon, unarchivedMultiPolygon);
 }
 
 @end

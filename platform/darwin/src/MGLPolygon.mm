@@ -126,6 +126,35 @@
     return self;
 }
 
+- (instancetype)initWithCoder:(NSCoder *)decoder {
+    if (self = [super initWithCoder:decoder]) {
+        _polygons = [decoder decodeObjectOfClass:[NSArray class] forKey:@"polygons"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    [coder encodeObject:_polygons forKey:@"polygons"];
+}
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) return YES;
+    if (![other isKindOfClass:[MGLMultiPolygon class]]) return NO;
+    
+    MGLMultiPolygon *otherMultiPolygon = other;
+    return [super isEqual:other]
+    && [self.polygons isEqualToArray:otherMultiPolygon.polygons];
+}
+
+- (NSUInteger)hash {
+    NSUInteger hash = [super hash];
+    for (MGLPolygon *polygon in self.polygons) {
+        hash += [polygon hash];
+    }
+    return hash;
+}
+
 - (BOOL)intersectsOverlayBounds:(MGLCoordinateBounds)overlayBounds {
     return MGLCoordinateBoundsIntersectsCoordinateBounds(_overlayBounds, overlayBounds);
 }
