@@ -20,9 +20,7 @@ bool operator==(std::vector<CLLocationCoordinate2D>& lhs, std::vector<CLLocation
     
     while (itLhs != lhs.end() || itRhs != rhs.end())
     {
-        if (*itLhs != *itRhs)
-            return false;
-        
+        if (*itLhs != *itRhs) return false;
         if (itLhs != lhs.end()) ++itLhs;
         if (itRhs != rhs.end()) ++itRhs;
     }

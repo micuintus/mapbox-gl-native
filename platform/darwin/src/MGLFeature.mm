@@ -292,8 +292,7 @@
     [coder encodeObject:attributes forKey:@"attributes"];
 }
 
-- (BOOL)isEqual:(id)other
-{
+- (BOOL)isEqual:(id)other {
     if (other == self) return YES;
     if (![other isKindOfClass:[MGLMultiPolygonFeature class]]) return NO;
     
@@ -303,8 +302,7 @@
                 || [self.geoJSONDictionary isEqualToDictionary:otherMultiPolygonFeature.geoJSONDictionary]));
 }
 
-- (NSUInteger)hash
-{
+- (NSUInteger)hash {
     return [super hash] + [[self geoJSONDictionary] hash];
 }
 
@@ -334,6 +332,35 @@
 
 + (instancetype)shapeCollectionWithShapes:(NSArray *)shapes {
     return [super shapeCollectionWithShapes:shapes];
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder {
+    if (self = [super initWithCoder:decoder]) {
+        NSSet<Class> *identifierClasses = [NSSet setWithArray:@[[NSString class], [NSNumber class]]];
+        identifier = [decoder decodeObjectOfClasses:identifierClasses forKey:@"identifier"];
+        attributes = [decoder decodeObjectOfClass:[NSDictionary class] forKey:@"attributes"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    [coder encodeObject:identifier forKey:@"identifier"];
+    [coder encodeObject:attributes forKey:@"attributes"];
+}
+
+- (BOOL)isEqual:(id)other {
+    if (other == self) return YES;
+    if (![other isKindOfClass:[MGLShapeCollectionFeature class]]) return NO;
+    
+    MGLShapeCollectionFeature *otherShapeCollectionFeature = other;
+    return ([super isEqual:other]
+            && ((!self.geoJSONDictionary && !otherShapeCollectionFeature.geoJSONDictionary)
+                || [self.geoJSONDictionary isEqualToDictionary:otherShapeCollectionFeature.geoJSONDictionary]));
+}
+
+- (NSUInteger)hash {
+    return [super hash] + [[self geoJSONDictionary] hash];
 }
 
 - (id)attributeForKey:(NSString *)key {

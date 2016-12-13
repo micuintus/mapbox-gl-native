@@ -352,4 +352,31 @@
     XCTAssertNotEqualObjects(anotherMultiPolygonFeature, unarchivedMultiPolygonFeature);
 }
 
+- (void)testShapeCollectionFeature {
+    CLLocationCoordinate2D coordinates[] = {
+        CLLocationCoordinate2DMake(10.12315786, 11.23451186),
+        CLLocationCoordinate2DMake(20.91836515, 21.93689215),
+        CLLocationCoordinate2DMake(30.55697246, 31.33988123),
+    };
+    
+    NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
+    
+    MGLPolyline *polyline = [MGLPolyline polylineWithCoordinates:coordinates count:numberOfCoordinates];
+    MGLPolygon *polygon = [MGLPolygon polygonWithCoordinates:coordinates count:numberOfCoordinates];
+    
+    MGLShapeCollectionFeature *shapeCollectionFeature = [MGLShapeCollectionFeature shapeCollectionWithShapes:@[polyline, polygon]];
+    shapeCollectionFeature.identifier = @(arc4random_uniform(100)).stringValue;
+    shapeCollectionFeature.attributes = @{@"bbox":@[@(arc4random_uniform(100)),
+                                                    @(arc4random_uniform(100)),
+                                                    @(arc4random_uniform(100)),
+                                                    @(arc4random_uniform(100))]};
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLShapeCollectionFeature class]];
+    [NSKeyedArchiver archiveRootObject:shapeCollectionFeature toFile:filePath];
+    
+    MGLShapeCollectionFeature *unarchivedShapeCollectionFeature = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    
+    XCTAssertEqualObjects(shapeCollectionFeature, unarchivedShapeCollectionFeature);
+}
+
 @end
