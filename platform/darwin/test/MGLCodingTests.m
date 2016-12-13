@@ -1,6 +1,9 @@
 #import <Mapbox/Mapbox.h>
 #import <XCTest/XCTest.h>
 
+#if TARGET_OS_IPHONE
+#import "MGLUserLocation_Private.h"
+#endif
 
 @interface MGLCodingTests : XCTestCase
 @end
@@ -423,6 +426,44 @@
     XCTAssertEqualObjects(NSStringFromCGVector(annotationView.centerOffset), NSStringFromCGVector(unarchivedAnnotationView.centerOffset));
     XCTAssertEqual(annotationView.scalesWithViewingDistance, unarchivedAnnotationView.scalesWithViewingDistance);
 }
-#end
+#endif
+
+#if TARGET_OS_IPHONE
+- (void)testUserLocation {
+    MGLUserLocation *userLocation = [[MGLUserLocation alloc] init];
+    userLocation.location = [[CLLocation alloc] initWithLatitude:1 longitude:1];
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLUserLocation class]];
+    [NSKeyedArchiver archiveRootObject:userLocation toFile:filePath];
+    
+    MGLUserLocation *unarchivedUserLocation = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    
+    XCTAssertEqualObjects(userLocation, unarchivedUserLocation);
+    unarchivedUserLocation.location = [[CLLocation alloc] initWithLatitude:10 longitude:10];
+    XCTAssertNotEqualObjects(userLocation, unarchivedUserLocation);
+}
+#endif
+
+#if TARGET_OS_IPHONE
+- (void)testUserLocationAnnotationView {
+    MGLUserLocationAnnotationView *annotationView = [[MGLUserLocationAnnotationView alloc] init];
+    annotationView.enabled = NO;
+    annotationView.selected = YES;
+    annotationView.draggable = YES;
+    annotationView.centerOffset = CGVectorMake(10, 10);
+    annotationView.scalesWithViewingDistance = NO;
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLUserLocationAnnotationView class]];
+    [NSKeyedArchiver archiveRootObject:annotationView toFile:filePath];
+    
+    MGLUserLocationAnnotationView *unarchivedAnnotationView = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    
+    XCTAssertEqual(annotationView.enabled, unarchivedAnnotationView.enabled);
+    XCTAssertEqual(annotationView.selected, unarchivedAnnotationView.selected);
+    XCTAssertEqual(annotationView.draggable, unarchivedAnnotationView.draggable);
+    XCTAssertEqualObjects(NSStringFromCGVector(annotationView.centerOffset), NSStringFromCGVector(unarchivedAnnotationView.centerOffset));
+    XCTAssertEqual(annotationView.scalesWithViewingDistance, unarchivedAnnotationView.scalesWithViewingDistance);
+}
+#endif
 
 @end
