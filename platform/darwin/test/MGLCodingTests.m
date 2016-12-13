@@ -379,4 +379,28 @@
     XCTAssertEqualObjects(shapeCollectionFeature, unarchivedShapeCollectionFeature);
 }
 
+- (void)testAnnotationImage {
+#if TARGET_IPHONE
+    UIGraphicsBeginImageContext(CGSizeMake(10, 10));
+    [[UIColor redColor] setFill];
+    UIRectFill(CGRectMake(0, 0, 10, 10));
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+#else
+    NSImage *image = [[NSImage alloc] initWithSize:CGSizeMake(10, 10)];
+    [image lockFocus];
+    [[NSColor redColor] drawSwatchInRect:CGRectMake(0, 0, 10, 10)];
+    [image unlockFocus];
+#endif
+    
+    MGLAnnotationImage *annotationImage = [MGLAnnotationImage annotationImageWithImage:image reuseIdentifier:@(arc4random_uniform(100)).stringValue];
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLAnnotationImage class]];
+    [NSKeyedArchiver archiveRootObject:annotationImage toFile:filePath];
+    
+    MGLAnnotationImage *unarchivedAnnotationImage = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    
+    XCTAssertEqualObjects(annotationImage, unarchivedAnnotationImage);
+}
+
 @end
