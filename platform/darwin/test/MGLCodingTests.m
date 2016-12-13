@@ -267,4 +267,29 @@
     XCTAssertNotEqualObjects(anotherMultiPolygon, unarchivedMultiPolygon);
 }
 
+- (void)testShapeCollection {
+    CLLocationCoordinate2D coordinates[] = {
+        CLLocationCoordinate2DMake(10.12315786, 11.23451186),
+        CLLocationCoordinate2DMake(20.91836515, 21.93689215),
+        CLLocationCoordinate2DMake(30.55697246, 31.33988123),
+    };
+    
+    NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
+    
+    MGLPolyline *polyline = [MGLPolyline polylineWithCoordinates:coordinates count:numberOfCoordinates];
+    MGLPolygon *polygon = [MGLPolygon polygonWithCoordinates:coordinates count:numberOfCoordinates];
+    
+    MGLShapeCollection *shapeCollection = [MGLShapeCollection shapeCollectionWithShapes:@[polyline, polygon]];
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLShapeCollection class]];
+    [NSKeyedArchiver archiveRootObject:shapeCollection toFile:filePath];
+    
+    MGLShapeCollection *unarchivedShapeCollection = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    MGLShapeCollection *anotherShapeCollection = [MGLShapeCollection shapeCollectionWithShapes:@[polygon]];
+    
+    XCTAssertEqualObjects(shapeCollection, unarchivedShapeCollection);
+    XCTAssertNotEqualObjects(shapeCollection, anotherShapeCollection);
+    
+}
+
 @end
