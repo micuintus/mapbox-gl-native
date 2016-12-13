@@ -304,7 +304,6 @@
     for (NSUInteger i = 0; i < 100; i++) {
         MGLPolylineFeature *polylineFeature = [MGLPolylineFeature polylineWithCoordinates:coordinates count:numberOfCoordinates];
         polylineFeature.identifier = @(arc4random() % 100).stringValue;
-        
         [polylines addObject:polylineFeature];
     }
     
@@ -319,6 +318,38 @@
     
     XCTAssertEqualObjects(multiPolylineFeature, unarchivedMultiPolylineFeature);
     XCTAssertNotEqualObjects(unarchivedMultiPolylineFeature, anotherMultiPolylineFeature);
+}
+
+- (void)testMultiPolygonFeature {
+    CLLocationCoordinate2D coordinates[] = {
+        CLLocationCoordinate2DMake(10.12315786, 11.23451185),
+        CLLocationCoordinate2DMake(20.88471238, 21.93684215),
+        CLLocationCoordinate2DMake(30.15697236, 31.32988123),
+    };
+    
+    NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
+    
+    NSMutableArray *polygons = [NSMutableArray array];
+    for (NSUInteger i = 0; i < 100; i++ ) {
+        MGLPolygonFeature *polygonFeature = [MGLPolygonFeature polygonWithCoordinates:coordinates count:numberOfCoordinates];
+        polygonFeature.identifier = @(arc4random_uniform(100)).stringValue;
+        [polygons addObject:polygonFeature];
+    }
+    
+    MGLMultiPolygonFeature *multiPolygonFeature = [MGLMultiPolygonFeature multiPolygonWithPolygons:polygons];
+    multiPolygonFeature.attributes = @{@"bbox": @[@(arc4random_uniform(100)),
+                                                  @(arc4random_uniform(100)),
+                                                  @(arc4random_uniform(100)),
+                                                  @(arc4random_uniform(100))]};
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLMultiPolylineFeature class]];
+    [NSKeyedArchiver archiveRootObject:multiPolygonFeature toFile:filePath];
+    
+    MGLMultiPolygonFeature *unarchivedMultiPolygonFeature = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    MGLMultiPolygonFeature *anotherMultiPolygonFeature = [MGLMultiPolygonFeature multiPolygonWithPolygons:[polygons subarrayWithRange:NSMakeRange(0, polygons.count/2)]];
+    
+    XCTAssertEqualObjects(multiPolygonFeature, unarchivedMultiPolygonFeature);
+    XCTAssertNotEqualObjects(anotherMultiPolygonFeature, unarchivedMultiPolygonFeature);
 }
 
 @end
