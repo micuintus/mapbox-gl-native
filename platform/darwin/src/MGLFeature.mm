@@ -26,11 +26,6 @@
 @synthesize identifier;
 @synthesize attributes;
 
-+ (BOOL)supportsSecureCoding
-{
-    return YES;
-}
-
 - (instancetype)initWithCoder:(NSCoder *)decoder
 {
     self = [super initWithCoder:decoder];
@@ -87,10 +82,6 @@
 @synthesize identifier;
 @synthesize attributes;
 
-+ (BOOL)supportsSecureCoding {
-    return YES;
-}
-
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     if (self = [super initWithCoder:decoder]) {
         NSSet<Class> *identifierClasses = [NSSet setWithArray:@[[NSString class], [NSNumber class]]];
@@ -143,10 +134,6 @@
 @synthesize identifier;
 @synthesize attributes;
 
-+ (BOOL)supportsSecureCoding {
-    return YES;
-}
-
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     if (self = [super initWithCoder:decoder]) {
         NSSet<Class> *identifierClasses = [NSSet setWithArray:@[[NSString class], [NSNumber class]]];
@@ -196,10 +183,6 @@
 
 @synthesize identifier;
 @synthesize attributes;
-
-+ (BOOL)supportsSecureCoding {
-    return YES;
-}
 
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     if (self = [super initWithCoder:decoder]) {
@@ -252,6 +235,36 @@
 
 @synthesize identifier;
 @synthesize attributes;
+
+- (instancetype)initWithCoder:(NSCoder *)decoder {
+    if (self = [super initWithCoder:decoder]) {
+        NSSet<Class> *identifierClasses = [NSSet setWithArray:@[[NSString class], [NSNumber class]]];
+        identifier = [decoder decodeObjectOfClasses:identifierClasses forKey:@"identifier"];
+        attributes = [decoder decodeObjectOfClass:[NSDictionary class] forKey:@"attributes"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    [coder encodeObject:identifier forKey:@"identifier"];
+    [coder encodeObject:attributes forKey:@"attributes"];
+}
+
+- (BOOL)isEqual:(id)other
+{
+    if (other == self) return YES;
+    if (![other isKindOfClass:[MGLMultiPolylineFeature class]]) return NO;
+    
+    MGLMultiPolylineFeature *otherMultiPolylineFeature = other;
+    return ([super isEqual:other]
+            && ((!self.geoJSONDictionary && !otherMultiPolylineFeature.geoJSONDictionary) || [self.geoJSONDictionary isEqualToDictionary:otherMultiPolylineFeature.geoJSONDictionary]));
+}
+
+- (NSUInteger)hash
+{
+    return [super hash] + [[self geoJSONDictionary] hash];
+}
 
 - (id)attributeForKey:(NSString *)key {
     return self.attributes[key];

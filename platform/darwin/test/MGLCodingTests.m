@@ -289,7 +289,36 @@
     
     XCTAssertEqualObjects(shapeCollection, unarchivedShapeCollection);
     XCTAssertNotEqualObjects(shapeCollection, anotherShapeCollection);
+}
+
+- (void)testMultiPolylineFeature {
+    CLLocationCoordinate2D coordinates[] = {
+        CLLocationCoordinate2DMake(10.12315786, 11.23451186),
+        CLLocationCoordinate2DMake(20.91836515, 21.93689215),
+        CLLocationCoordinate2DMake(30.55697246, 31.33988123),
+    };
     
+    NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
+    
+    NSMutableArray *polylines = [NSMutableArray array];
+    for (NSUInteger i = 0; i < 100; i++) {
+        MGLPolylineFeature *polylineFeature = [MGLPolylineFeature polylineWithCoordinates:coordinates count:numberOfCoordinates];
+        polylineFeature.identifier = @(arc4random() % 100).stringValue;
+        
+        [polylines addObject:polylineFeature];
+    }
+    
+    MGLMultiPolylineFeature *multiPolylineFeature = [MGLMultiPolylineFeature multiPolylineWithPolylines:polylines];
+    multiPolylineFeature.attributes = @{@"bbox": @[@4, @3, @2, @1]};
+    
+    NSString *filePath = [self temporaryFilePathForClass:[MGLMultiPolylineFeature class]];
+    [NSKeyedArchiver archiveRootObject:multiPolylineFeature toFile:filePath];
+    
+    MGLMultiPolylineFeature *unarchivedMultiPolylineFeature = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    MGLMultiPolylineFeature *anotherMultiPolylineFeature = [MGLMultiPolylineFeature multiPolylineWithPolylines:[polylines subarrayWithRange:NSMakeRange(0, polylines.count/2)]];
+    
+    XCTAssertEqualObjects(multiPolylineFeature, unarchivedMultiPolylineFeature);
+    XCTAssertNotEqualObjects(unarchivedMultiPolylineFeature, anotherMultiPolylineFeature);
 }
 
 @end
