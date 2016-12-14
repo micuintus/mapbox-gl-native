@@ -56,7 +56,8 @@ public:
 
     // Rotation
     float getAngle() const;
-    float getAltitude() const;
+    float getFieldOfView() const;
+    float getCameraToCenterDistance() const;
     float getPitch() const;
 
     // State
@@ -109,7 +110,7 @@ private:
     double x = 0, y = 0;
     double angle = 0;
     double scale = 1;
-    double altitude = 1.5;
+    double fov = 0.6435011087932844;
     double pitch = 0.0;
 
     // cache values for spherical mercator math
