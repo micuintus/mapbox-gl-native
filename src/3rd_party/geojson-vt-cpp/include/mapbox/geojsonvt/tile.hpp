@@ -112,7 +112,7 @@ private:
             tile.features.push_back({ std::move(new_line), props });
 #else
             mapbox::geometry::feature<int16_t> feature;
-            feature.geometry = new_line;
+            feature.geometry = std::move(new_line);
             feature.properties = props;
             tile.features.push_back(std::move(feature));
 #endif
@@ -126,7 +126,7 @@ private:
             tile.features.push_back({ std::move(new_polygon), props });
 #else
             mapbox::geometry::feature<int16_t> feature;
-            feature.geometry = new_polygon;
+            feature.geometry = std::move(new_polygon);
             feature.properties = props;
             tile.features.push_back(std::move(feature));
 #endif
@@ -150,10 +150,28 @@ private:
         case 0:
             break;
         case 1:
+#if !defined(__GNUC__) || __GNUC__ >= 5
             tile.features.push_back({ std::move(new_multi[0]), props });
+#else
+            {
+                mapbox::geometry::feature<int16_t> feature;
+                feature.geometry = std::move(new_multi[0]);
+                feature.properties = props;
+                tile.features.push_back(std::move(feature));
+            }
+#endif
             break;
         default:
+#if !defined(__GNUC__) || __GNUC__ >= 5
             tile.features.push_back({ std::move(new_multi), props });
+#else
+            {
+                mapbox::geometry::feature<int16_t> feature;
+                feature.geometry = std::move(new_multi);
+                feature.properties = props;
+                tile.features.push_back(std::move(feature));
+            }
+#endif
             break;
         }
     }
