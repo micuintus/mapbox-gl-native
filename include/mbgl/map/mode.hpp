@@ -51,23 +51,23 @@ enum class MapDebugOptions : EnumType {
 #endif // MBGL_USE_GLES2
 };
 
-constexpr MapDebugOptions operator|(MapDebugOptions lhs, MapDebugOptions rhs) {
+MapDebugOptions operator|(MapDebugOptions lhs, MapDebugOptions rhs) {
     return MapDebugOptions(mbgl::underlying_type(lhs) | mbgl::underlying_type(rhs));
 }
 
-constexpr MapDebugOptions& operator|=(MapDebugOptions& lhs, MapDebugOptions rhs) {
+MapDebugOptions& operator|=(MapDebugOptions& lhs, MapDebugOptions rhs) {
     return (lhs = MapDebugOptions(mbgl::underlying_type(lhs) | mbgl::underlying_type(rhs)));
 }
 
-constexpr bool operator&(MapDebugOptions lhs, MapDebugOptions rhs) {
+bool operator&(MapDebugOptions lhs, MapDebugOptions rhs) {
     return mbgl::underlying_type(lhs) & mbgl::underlying_type(rhs);
 }
 
-constexpr MapDebugOptions& operator&=(MapDebugOptions& lhs, MapDebugOptions rhs) {
+MapDebugOptions& operator&=(MapDebugOptions& lhs, MapDebugOptions rhs) {
     return (lhs = MapDebugOptions(mbgl::underlying_type(lhs) & mbgl::underlying_type(rhs)));
 }
 
-constexpr MapDebugOptions operator~(MapDebugOptions value) {
+MapDebugOptions operator~(MapDebugOptions value) {
     return MapDebugOptions(~mbgl::underlying_type(value));
 }
 
