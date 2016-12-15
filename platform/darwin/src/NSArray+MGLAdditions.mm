@@ -57,7 +57,6 @@
     }
     
     std::vector<CLLocationCoordinate2D> coordinates = { coords, coords + numberOfCoordinates };
-    
     free(coords);
     
     return coordinates;

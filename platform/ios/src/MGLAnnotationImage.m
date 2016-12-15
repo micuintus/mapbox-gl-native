@@ -38,7 +38,6 @@
     if (self = [super init]) {
         _image = [decoder decodeObjectOfClass:[UIImage class] forKey:@"image"];
         _reuseIdentifier = [decoder decodeObjectOfClass:[NSString class] forKey:@"reuseIdentifier"];
-        _styleIconIdentifier = [decoder decodeObjectOfClass:[NSString class] forKey:@"styleIconIdentifier"];
         _enabled = [decoder decodeBoolForKey:@"enabled"];
     }
     return self;
@@ -47,7 +46,6 @@
 - (void)encodeWithCoder:(NSCoder *)coder {
     [coder encodeObject:_image forKey:@"image"];
     [coder encodeObject:_reuseIdentifier forKey:@"reuseIdentifier"];
-    [coder encodeObject:_styleIconIdentifier forKey:@"styleIconIdentifier"];
     [coder encodeBool:_enabled forKey:@"enabled"];
 }
 

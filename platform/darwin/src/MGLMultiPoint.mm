@@ -1,7 +1,7 @@
 #import "MGLMultiPoint_Private.h"
 #import "MGLGeometry_Private.h"
 #import "MGLShape_Private.h"
-#import "NSArray+MGLAdditions.h"
+#import "NSCoder+MGLAdditions.h"
 #import "MGLTypes.h"
 
 @implementation MGLMultiPoint
@@ -28,10 +28,8 @@
 
 - (instancetype)initWithCoder:(NSCoder *)decoder
 {
-    if (self = [super initWithCoder:decoder])
-    {
-        NSArray *coordinates = [decoder decodeObjectOfClass:[NSArray class] forKey:@"coordinates"];
-        _coordinates = [coordinates mgl_coordinates];
+    if (self = [super initWithCoder:decoder]) {
+        _coordinates = [decoder mgl_decodeLocationCoordinates2DForKey:@"coordinates"];
     }
     return self;
 }
@@ -39,9 +37,7 @@
 - (void)encodeWithCoder:(NSCoder *)coder
 {
     [super encodeWithCoder:coder];
-    
-    NSArray *coordinates = [NSArray mgl_coordinatesFromCoordinates:_coordinates];
-    [coder encodeObject:coordinates forKey:@"coordinates"];
+    [coder mgl_encodeLocationCoordinates2D:_coordinates forKey:@"coordinates"];
 }
 
 - (BOOL)isEqual:(id)other
