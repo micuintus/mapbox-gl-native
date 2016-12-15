@@ -56,7 +56,6 @@
     MGLAnnotationImage *otherAnnotationImage = other;
     
     return ((!_reuseIdentifier && !otherAnnotationImage.reuseIdentifier) || [_reuseIdentifier isEqualToString:otherAnnotationImage.reuseIdentifier])
-    && ((!_styleIconIdentifier && !otherAnnotationImage.styleIconIdentifier) || [_styleIconIdentifier isEqualToString:otherAnnotationImage.styleIconIdentifier])
     && _enabled == otherAnnotationImage.enabled
     && ((!_image && !otherAnnotationImage.image) || [UIImagePNGRepresentation(_image) isEqualToData:UIImagePNGRepresentation(otherAnnotationImage.image)]);
 }
@@ -64,7 +63,6 @@
 - (NSUInteger)hash {
     NSUInteger hash;
     hash += [_reuseIdentifier hash];
-    hash += [_styleIconIdentifier hash];
     hash += _enabled;
     hash += [_image hash];
     return hash;

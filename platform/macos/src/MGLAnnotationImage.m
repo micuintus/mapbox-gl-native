@@ -31,7 +31,6 @@
     if (self = [super init]) {
         _image = [decoder decodeObjectOfClass:[NSImage class] forKey:@"image"];
         _reuseIdentifier = [decoder decodeObjectOfClass:[NSString class] forKey:@"reuseIdentifier"];
-        _styleIconIdentifier = [decoder decodeObjectOfClass:[NSString class] forKey:@"styleIconIdentifier"];
         _cursor = [decoder decodeObjectOfClass:[NSCursor class] forKey:@"cursor"];
         _selectable = [decoder decodeBoolForKey:@"selectable"];
     }
@@ -41,7 +40,6 @@
 - (void)encodeWithCoder:(NSCoder *)coder {
     [coder encodeObject:_image forKey:@"image"];
     [coder encodeObject:_reuseIdentifier forKey:@"reuseIdentifier"];
-    [coder encodeObject:_styleIconIdentifier forKey:@"styleIconIdentifier"];
     [coder encodeObject:_cursor forKey:@"cursor"];
     [coder encodeBool:_selectable forKey:@"selectable"];
 }
@@ -53,10 +51,17 @@
     MGLAnnotationImage *otherAnnotationImage = other;
     
     return ((!_reuseIdentifier && !otherAnnotationImage.reuseIdentifier) || [_reuseIdentifier isEqualToString:otherAnnotationImage.reuseIdentifier])
-    && ((!_styleIconIdentifier && !otherAnnotationImage.styleIconIdentifier) || [_styleIconIdentifier isEqualToString:otherAnnotationImage.styleIconIdentifier])
     && _selectable == otherAnnotationImage.selectable
     && ((!_cursor && !otherAnnotationImage.cursor) || [_cursor isEqual:otherAnnotationImage.cursor])
     && ((!_image && !otherAnnotationImage.image) || [[_image TIFFRepresentation] isEqualToData:[otherAnnotationImage.image TIFFRepresentation]]);
+}
+
+- (NSUInteger)hash {
+    NSUInteger hash;
+    hash += [_reuseIdentifier hash];
+    hash += _selectable;
+    hash += [_image hash];
+    return hash;
 }
 
 @end
