@@ -1,6 +1,6 @@
 #include "qquickmapboxglrenderer.hpp"
 
-#include "qmapboxgl.hpp"
+#include "../include/qmapboxgl.hpp"
 #include "qquickmapboxgl.hpp"
 
 #include <QSize>

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "qmapbox.hpp"
-#include "qmapboxgl.hpp"
+#include "../include/qmapbox.hpp"
+#include "../include/qmapboxgl.hpp"
 
 #include <QObject>
 #include <QQuickFramebufferObject>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "qmapbox.hpp"
+#include "../include/qmapbox.hpp"
 #include "qquickmapboxglmapparameter.hpp"
 
 #include <QColor>

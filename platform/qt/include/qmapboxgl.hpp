@@ -1,7 +1,7 @@
 #ifndef QMAPBOXGL_H
 #define QMAPBOXGL_H
 
-#include <QMapbox>
+#include "QMapbox"
 #include <QObject>
 #include <QSize>
 #include <QPointF>
