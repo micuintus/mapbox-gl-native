@@ -4,7 +4,7 @@ TEMPLATE = lib
 
 QT += location network opengl qml
 
-CONFIG += c++14 exceptions rtti shared_and_static build_all
+CONFIG += c++14 exceptions rtti shared build_all
 
 # Core Mapbox GL
 SOURCES += \
