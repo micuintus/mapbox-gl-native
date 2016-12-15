@@ -46,7 +46,7 @@
     if (![other isKindOfClass:[MGLPointFeature class]]) return NO;
     
     MGLPointFeature *otherPointFeature = other;
-    return [super isEqual:other] && [self mbglFeature] == [otherPointFeature mbglFeature];
+    return [super isEqual:other] && [self geoJSONObject] == [otherPointFeature geoJSONObject];
 }
 
 - (NSUInteger)hash {
@@ -95,7 +95,7 @@
     if (![other isKindOfClass:[MGLPolylineFeature class]]) return NO;
     
     MGLPolylineFeature *otherPointFeature = other;
-    return [super isEqual:other] && [self mbglFeature] == [otherPointFeature mbglFeature];
+    return [super isEqual:other] && [self geoJSONObject] == [otherPointFeature geoJSONObject];
 }
 
 - (NSUInteger)hash {
@@ -144,7 +144,7 @@
     if (![other isKindOfClass:[MGLPolygonFeature class]]) return NO;
     
     MGLPolygonFeature *otherPolygonFeature = other;
-    return [super isEqual:other] && [self mbglFeature] == [otherPolygonFeature mbglFeature];
+    return [super isEqual:other] && [self geoJSONObject] == [otherPolygonFeature geoJSONObject];
 }
 
 - (NSUInteger)hash {
@@ -193,7 +193,7 @@
     if (![other isKindOfClass:[MGLPointCollectionFeature class]]) return NO;
     
     MGLPointCollectionFeature *otherPointFeature = other;
-    return [super isEqual:other] && [self mbglFeature] == [otherPointFeature mbglFeature];
+    return [super isEqual:other] && [self geoJSONObject] == [otherPointFeature geoJSONObject];
 }
 
 - (NSUInteger)hash {
@@ -242,7 +242,7 @@
     if (![other isKindOfClass:[MGLMultiPolylineFeature class]]) return NO;
     
     MGLMultiPolylineFeature *otherMultiPolylineFeature = other;
-    return [super isEqual:other] && [self mbglFeature] == [otherMultiPolylineFeature mbglFeature];
+    return [super isEqual:other] && [self geoJSONObject] == [otherMultiPolylineFeature geoJSONObject];
 }
 
 - (NSUInteger)hash {
@@ -291,7 +291,7 @@
     if (![other isKindOfClass:[MGLMultiPolygonFeature class]]) return NO;
     
     MGLMultiPolygonFeature *otherMultiPolygonFeature = other;
-    return [super isEqual:other] && [self mbglFeature] == [otherMultiPolygonFeature mbglFeature];
+    return [super isEqual:other] && [self geoJSONObject] == [otherMultiPolygonFeature geoJSONObject];
 }
 
 - (NSUInteger)hash {
@@ -346,7 +346,7 @@
     if (![other isKindOfClass:[MGLShapeCollectionFeature class]]) return NO;
     
     MGLShapeCollectionFeature *otherShapeCollectionFeature = other;
-    return [super isEqual:other] && [self mbglFeatureCollection] == [otherShapeCollectionFeature mbglFeatureCollection];
+    return [super isEqual:other] && [self geoJSONObject] == [otherShapeCollectionFeature geoJSONObject];
 }
 
 - (NSUInteger)hash {
