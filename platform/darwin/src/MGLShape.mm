@@ -7,25 +7,8 @@
 
 #import <mbgl/util/geo.hpp>
 
-bool operator!=(const CLLocationCoordinate2D lhs, const CLLocationCoordinate2D rhs) {
-    return lhs.latitude != rhs.latitude || lhs.longitude != rhs.longitude;
-}
-
-bool operator==(std::vector<CLLocationCoordinate2D>& lhs, std::vector<CLLocationCoordinate2D>& rhs)
-{
-    if (lhs.size() != rhs.size()) return false;
-    
-    auto itLhs = lhs.begin();
-    auto itRhs = rhs.begin();
-    
-    while (itLhs != lhs.end() || itRhs != rhs.end())
-    {
-        if (*itLhs != *itRhs) return false;
-        if (itLhs != lhs.end()) ++itLhs;
-        if (itRhs != rhs.end()) ++itRhs;
-    }
-    
-    return true;
+bool operator==(const CLLocationCoordinate2D lhs, const CLLocationCoordinate2D rhs) {
+    return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude;
 }
 
 @implementation MGLShape
