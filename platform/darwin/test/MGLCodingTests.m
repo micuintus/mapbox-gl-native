@@ -364,8 +364,8 @@
     
     NSUInteger numberOfCoordinates = sizeof(coordinates) / sizeof(CLLocationCoordinate2D);
     
-    MGLPolyline *polyline = [MGLPolyline polylineWithCoordinates:coordinates count:numberOfCoordinates];
-    MGLPolygon *polygon = [MGLPolygon polygonWithCoordinates:coordinates count:numberOfCoordinates];
+    MGLPolylineFeature *polyline = [MGLPolylineFeature polylineWithCoordinates:coordinates count:numberOfCoordinates];
+    MGLPolygonFeature *polygon = [MGLPolygonFeature polygonWithCoordinates:coordinates count:numberOfCoordinates];
     
     MGLShapeCollectionFeature *shapeCollectionFeature = [MGLShapeCollectionFeature shapeCollectionWithShapes:@[polyline, polygon]];
     shapeCollectionFeature.identifier = @(arc4random_uniform(100)).stringValue;

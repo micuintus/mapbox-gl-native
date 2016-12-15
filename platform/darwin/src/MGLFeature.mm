@@ -46,8 +46,7 @@
     if (![other isKindOfClass:[MGLPointFeature class]]) return NO;
     
     MGLPointFeature *otherPointFeature = other;
-    return ([super isEqual:other]
-            && ((!self.geoJSONDictionary && !otherPointFeature.geoJSONDictionary) || [self.geoJSONDictionary isEqualToDictionary:otherPointFeature.geoJSONDictionary]));
+    return [super isEqual:other] && [self mbglFeature] == [otherPointFeature mbglFeature];
 }
 
 - (NSUInteger)hash {
@@ -96,8 +95,7 @@
     if (![other isKindOfClass:[MGLPolylineFeature class]]) return NO;
     
     MGLPolylineFeature *otherPointFeature = other;
-    return ([super isEqual:other]
-            && ((!self.geoJSONDictionary && !otherPointFeature.geoJSONDictionary) || [self.geoJSONDictionary isEqualToDictionary:otherPointFeature.geoJSONDictionary]));
+    return [super isEqual:other] && [self mbglFeature] == [otherPointFeature mbglFeature];
 }
 
 - (NSUInteger)hash {
@@ -145,9 +143,8 @@
     if (other == self) return YES;
     if (![other isKindOfClass:[MGLPolygonFeature class]]) return NO;
     
-    MGLPolygonFeature *otherPointFeature = other;
-    return ([super isEqual:other]
-            && ((!self.geoJSONDictionary && !otherPointFeature.geoJSONDictionary) || [self.geoJSONDictionary isEqualToDictionary:otherPointFeature.geoJSONDictionary]));
+    MGLPolygonFeature *otherPolygonFeature = other;
+    return [super isEqual:other] && [self mbglFeature] == [otherPolygonFeature mbglFeature];
 }
 
 - (NSUInteger)hash {
@@ -196,8 +193,7 @@
     if (![other isKindOfClass:[MGLPointCollectionFeature class]]) return NO;
     
     MGLPointCollectionFeature *otherPointFeature = other;
-    return ([super isEqual:other]
-            && ((!self.geoJSONDictionary && !otherPointFeature.geoJSONDictionary) || [self.geoJSONDictionary isEqualToDictionary:otherPointFeature.geoJSONDictionary]));
+    return [super isEqual:other] && [self mbglFeature] == [otherPointFeature mbglFeature];
 }
 
 - (NSUInteger)hash {
@@ -246,9 +242,7 @@
     if (![other isKindOfClass:[MGLMultiPolylineFeature class]]) return NO;
     
     MGLMultiPolylineFeature *otherMultiPolylineFeature = other;
-    return ([super isEqual:other]
-            && ((!self.geoJSONDictionary && !otherMultiPolylineFeature.geoJSONDictionary)
-                || [self.geoJSONDictionary isEqualToDictionary:otherMultiPolylineFeature.geoJSONDictionary]));
+    return [super isEqual:other] && [self mbglFeature] == [otherMultiPolylineFeature mbglFeature];
 }
 
 - (NSUInteger)hash {
@@ -297,9 +291,7 @@
     if (![other isKindOfClass:[MGLMultiPolygonFeature class]]) return NO;
     
     MGLMultiPolygonFeature *otherMultiPolygonFeature = other;
-    return ([super isEqual:other]
-            && ((!self.geoJSONDictionary && !otherMultiPolygonFeature.geoJSONDictionary)
-                || [self.geoJSONDictionary isEqualToDictionary:otherMultiPolygonFeature.geoJSONDictionary]));
+    return [super isEqual:other] && [self mbglFeature] == [otherMultiPolygonFeature mbglFeature];
 }
 
 - (NSUInteger)hash {
@@ -354,9 +346,7 @@
     if (![other isKindOfClass:[MGLShapeCollectionFeature class]]) return NO;
     
     MGLShapeCollectionFeature *otherShapeCollectionFeature = other;
-    return ([super isEqual:other]
-            && ((!self.geoJSONDictionary && !otherShapeCollectionFeature.geoJSONDictionary)
-                || [self.geoJSONDictionary isEqualToDictionary:otherShapeCollectionFeature.geoJSONDictionary]));
+    return [super isEqual:other] && [self mbglFeatureCollection] == [otherShapeCollectionFeature mbglFeatureCollection];
 }
 
 - (NSUInteger)hash {
