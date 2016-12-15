@@ -9,11 +9,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation MGLPointCollection
 {
-    MGLCoordinateBounds _overlayBounds;
+    mbgl::optional<mbgl::LatLngBounds> _bounds;
     std::vector<CLLocationCoordinate2D> _coordinates;
 }
-
-@synthesize overlayBounds = _overlayBounds;
 
 + (instancetype)pointCollectionWithCoordinates:(const CLLocationCoordinate2D *)coords count:(NSUInteger)count
 {
@@ -26,7 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
     if (self)
     {
         _coordinates = { coords, coords + count };
-        [self setupBounds];
     }
     return self;
 }
@@ -35,7 +32,6 @@ NS_ASSUME_NONNULL_BEGIN
     if (self = [super initWithCoder:decoder]) {
         NSArray *coordinates = [decoder decodeObjectOfClass:[NSArray class] forKey:@"coordinates"];
         _coordinates = [coordinates mgl_coordinates];
-        [self setupBounds];
     }
     return self;
 }
@@ -54,13 +50,15 @@ NS_ASSUME_NONNULL_BEGIN
             && ((![self geoJSONDictionary] && ![otherCollection geoJSONDictionary]) || [[self geoJSONDictionary] isEqualToDictionary:[otherCollection geoJSONDictionary]]));
 }
 
-- (void)setupBounds {
-    mbgl::LatLngBounds bounds = mbgl::LatLngBounds::empty();
-    for (auto coordinate : _coordinates)
-    {
-        bounds.extend(mbgl::LatLng(coordinate.latitude, coordinate.longitude));
+- (MGLCoordinateBounds)overlayBounds {
+    if (!_bounds) {
+        mbgl::LatLngBounds bounds = mbgl::LatLngBounds::empty();
+        for (auto coordinate : _coordinates) {
+            bounds.extend(mbgl::LatLng(coordinate.latitude, coordinate.longitude));
+        }
+        _bounds = bounds;
     }
-    _overlayBounds = MGLCoordinateBoundsFromLatLngBounds(bounds);
+    return MGLCoordinateBoundsFromLatLngBounds(*_bounds);
 }
 
 - (NSUInteger)pointCount
@@ -93,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)intersectsOverlayBounds:(MGLCoordinateBounds)overlayBounds
 {
-    return MGLCoordinateBoundsIntersectsCoordinateBounds(_overlayBounds, overlayBounds);
+    return MGLCoordinateBoundsIntersectsCoordinateBounds(self.overlayBounds, overlayBounds);
 }
 
 - (mbgl::Geometry<double>)geometryObject
